@@ -1,0 +1,19 @@
+GWTJSZip
+
+this is jszip wrapper for GWT
+http://stuk.github.io/jszip/
+
+jszip is MIT-LICENSED ziptool for javascript
+
+enjoy!
+
+HOW TO USE
+check com.akjava.gwt.samplejszip module
+
+TIPS
+some method need my other library for Blob and Blob download
+https://github.com/akjava/akjava_gwtlib
+https://github.com/akjava/html5gwt
+
+TODO
+support load
