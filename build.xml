@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     2011/12/16 18:26:16                                                        
+
+     project    
+     description
+                   
+     aki                                                                
+     ====================================================================== -->
+<project name="project" default="default">
+    <description>
+            description
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="depends" description="description">
+        <javac destdir="tmp" srcdir="src" includes="com/akjava/gwt/jszip/**">
+        	<classpath path="lib\akjavalibgwt-dep_131220.jar;lib\akjavahtml5gwt_131220.jar;lib\akjavahtml5gwt_131220.jar;C:\eclipse\plugins\com.google.gwt.eclipse.sdkbundle_2.5.1\gwt-2.5.1\gwt-user.jar;C:\eclipse\plugins\com.google.gwt.eclipse.sdkbundle_2.5.1\gwt-2.5.1\gwt-dev.jar">
+        		
+        	</classpath>
+        </javac>
+    	<copydir dest="tmp" src="src" includes="com/akjava/gwt/jszip/**"></copydir>
+    	<jar destfile="built/akjavajszip.jar" basedir="tmp"/>
+    	<delete dir="tmp"></delete>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="depends">
+    	<delete dir="tmp"></delete>
+    	<mkdir dir="tmp"/>
+    	<mkdir dir="built"/>
+    </target>
+
+</project>
