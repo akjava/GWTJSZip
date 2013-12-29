@@ -3,8 +3,7 @@
 <module rename-to='gwtjszip'>
 	<inherits name="com.google.gwt.user.User" />
 	<inherits name='com.akjava.gwt.jszip.GWTJSZip'/>
-	<inherits name="com.akjava.gwt.lib.Commons"/>
-	<inherits name="com.akjava.gwt.html5.Html5widget" />
+
 	<source path="client" />
 	<entry-point class="com.akjava.gwt.samplejszip.client.SampleJSZip" />
 </module>

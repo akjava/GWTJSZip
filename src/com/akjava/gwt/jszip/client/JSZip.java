@@ -10,8 +10,46 @@ protected JSZip(){}
 	return new $wnd.JSZip();
 	}-*/;
 	
-	public final native JSFile file(String fileName,String text)/*-{
+	
+	public final native JSFile getFile(String fileName)/*-{
+	return this.file(fileName);
+	}-*/;
+	
+	public final native JSZip file(String fileName,String text)/*-{
 	return this.file(fileName,text);
+	}-*/;
+	
+	
+	/**
+	 * designed for canvas-url
+	 * @param fileName
+	 * @param url
+	 * @return
+	 */
+	public final  JSZip base64UrlFile(String fileName,String url){
+		int index=url.indexOf("base64,");
+		String imgData;
+		if(index==-1){
+			imgData=url;
+		}else{
+			imgData=url.substring(index+"base64,".length());
+		}
+		return file(fileName, imgData,JSFileOptions.newJSFileOptions().base64(true));
+	}
+	
+	public final native JSZip file(String fileName,String text,JSFileOptions option)/*-{
+	return this.file(fileName,text,option);
+	}-*/;
+	
+	/**
+	 * not tested
+	 * @param fileName
+	 * @param data
+	 * @param option
+	 * @return
+	 */
+	public final native JSZip file(String fileName,JavaScriptObject data,JSFileOptions option)/*-{
+	return this.file(fileName,data,option);
 	}-*/;
 	
 	public final native JSZip folder(String folderName)/*-{
