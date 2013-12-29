@@ -21,3 +21,6 @@ I have no idea why this error happen
 TODO
 support date
 support load
+
+PROBLEMS
+only ascii-file name work fine on Windows default zip-extractor,so use 7Zip to unzip

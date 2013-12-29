@@ -1,25 +1,49 @@
 package com.akjava.gwt.samplejszip.client;
 
+import java.io.UnsupportedEncodingException;
+
 import com.akjava.gwt.html5.client.download.HTML5Download;
 import com.akjava.gwt.html5.client.file.Blob;
-import com.akjava.gwt.jszip.client.GenerateParameter;
+import com.akjava.gwt.html5.client.file.File;
+import com.akjava.gwt.html5.client.file.FileHandler;
+import com.akjava.gwt.html5.client.file.FileReader;
+import com.akjava.gwt.html5.client.file.FileUtils;
+import com.akjava.gwt.html5.client.file.Uint8Array;
+import com.akjava.gwt.html5.client.file.webkit.DirectoryCallback;
+import com.akjava.gwt.html5.client.file.webkit.FileEntry;
+import com.akjava.gwt.html5.client.file.webkit.FilePathCallback;
+import com.akjava.gwt.html5.client.file.webkit.Item;
 import com.akjava.gwt.jszip.client.JSFile;
-import com.akjava.gwt.jszip.client.JSFileOptions;
 import com.akjava.gwt.jszip.client.JSZip;
 import com.akjava.gwt.lib.client.CanvasUtils;
 import com.akjava.gwt.lib.client.LogUtils;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DragEnterEvent;
+import com.google.gwt.event.dom.client.DragEnterHandler;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SampleJSZip implements EntryPoint {
 
+	private JSZip dropedZip;
+
+	VerticalPanel downloadLinks=new VerticalPanel();
 	@Override
 	public void onModuleLoad() {
-		TextArea area=new TextArea();
-		RootPanel.get().add(area);
+		final VerticalPanel root=new VerticalPanel();
+		RootPanel.get().add(root);
+		
 		
 		JSZip zip=JSZip.newJSZip();
 		zip.file("test.txt", "hello world");
@@ -52,9 +76,84 @@ public class SampleJSZip implements EntryPoint {
 		
 		Blob blob=zip.generateBlob(null);
 		
-		Anchor a=new HTML5Download().generateDownloadLink(blob,"application/zip","test.zip","download blob",false);
-		RootPanel.get().add(a);
+		Anchor a=new HTML5Download().generateDownloadLink(blob,"application/zip","test.zip","download sample blob",false);
+		root.add(a);
 		
+		TextArea area=new TextArea();
+		root.add(area);
+		area.setText("drop file to zip");
+		//area.setReadOnly(true);
+		final Button bt=new Button("genrerate new download link",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				Blob blob=dropedZip.generateBlob(null);
+				
+				Anchor a=new HTML5Download().generateDownloadLink(blob,"application/zip","test.zip","download sample blob",false);
+				downloadLinks.add(a);
+			}
+		});
+		bt.setEnabled(false);
+		root.add(bt);
+		
+		
+		area.addDragEnterHandler(new DragEnterHandler() {
+			
+			@Override
+			public void onDragEnter(DragEnterEvent event) {
+				event.preventDefault();
+			}
+		});
+		area.addDropHandler(new DropHandler() {
+			@Override
+			public void onDrop(DropEvent event) {
+				event.preventDefault();
+				bt.setEnabled(true);
+				downloadLinks.clear();
+				
+				dropedZip = JSZip.newJSZip();
+				
+				//inputArea.setText("");
+				final FilePathCallback callback = new FilePathCallback() {
+					@Override
+					public void callback(File file,String path) {
+						if(file==null){
+							return;//directory;
+						}
+						
+						//TODO support dir
+						//zip2.file(path, file, null);
+						LogUtils.log(path+file.getFileName());
+						
+						readFile(dropedZip,file,path);
+					}
+				};
+
+				final JsArray<Item> items = FileUtils.transferToItem(event
+						.getNativeEvent());
+				
+				if (items.length() > 0) {
+					for (int i = 0; i < items.length(); i++) {
+						
+
+						FileEntry entry = items.get(i).webkitGetAsEntry();
+
+						entryCallback(entry,callback,"");
+
+					}
+
+				}
+
+				
+				
+			}
+		});
+		
+		/*
+		 * i have no idea how to catch every async file-load finished.
+		 */
+	
 		
 		/*
 		 * 
@@ -69,8 +168,47 @@ public class SampleJSZip implements EntryPoint {
 		RootPanel.get().add(a);
 		*/
 		
+		root.add(downloadLinks);
 		
-		
+	}
+
+	public void readFile(final JSZip zip,final File file,final String path){
+		final FileReader reader = FileReader.createFileReader();
+		reader.setOnLoad(new FileHandler() {
+			@Override
+			public void onLoad() {
+				LogUtils.log("add zip:"+file.getFileName());
+				Uint8Array array = reader.getResultAsBuffer();
+				String fixedPath=path.startsWith("/")?path.substring(1):path;
+				if(!fixedPath.isEmpty()){
+					
+					LogUtils.log("create folder:"+fixedPath);
+					zip.folder(fixedPath).file(file.getFileName(), array, null);
+				}else{
+					zip.file(file.getFileName(), array, null);
+				}
+			}
+		});
+		reader.readAsArrayBuffer(file);
+	}
+	
+	public void entryCallback(final FileEntry entry,final FilePathCallback callback,String path){
+		if (entry.isFile()) {
+			entry.file(callback,path);
+		} else if (entry.isDirectory()) {
+			entry.getReader().readEntries(
+					new DirectoryCallback() {
+						@Override
+						public void callback(
+								JsArray<FileEntry> entries) {
+							callback.callback(null, entry.getFullPath());
+							for (int j = 0; j < entries
+									.length(); j++) {
+								entryCallback(entries.get(j),callback,entry.getFullPath());
+							}
+						}
+					});
+		}
 	}
 
 }
