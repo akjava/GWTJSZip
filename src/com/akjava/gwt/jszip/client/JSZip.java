@@ -6,6 +6,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class JSZip extends JavaScriptObject{
 protected JSZip(){}
 
+	public static native final boolean exists()/*-{
+	return $wnd.JSZip;
+	}-*/;
+
 	public final static native JSZip newJSZip()/*-{
 	return new $wnd.JSZip();
 	}-*/;
