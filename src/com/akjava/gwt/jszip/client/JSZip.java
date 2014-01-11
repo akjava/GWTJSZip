@@ -1,11 +1,14 @@
 package com.akjava.gwt.jszip.client;
 
+import java.util.Date;
+
 import com.akjava.gwt.html5.client.file.Blob;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class JSZip extends JavaScriptObject{
 protected JSZip(){}
-
+	private static final DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MMMM dd, yyyy HH:mm:ss");
 	public static native final boolean exists()/*-{
 	return $wnd.JSZip;
 	}-*/;
@@ -19,10 +22,25 @@ protected JSZip(){}
 	return this.file(fileName);
 	}-*/;
 	
+	/**
+	 * 
+	 * @param fileName
+	 * if fileName contain /,directory is created automatically  
+	 * @param text
+	 * @return
+	 */
 	public final native JSZip file(String fileName,String text)/*-{
 	return this.file(fileName,text);
 	}-*/;
 	
+	public final native JSZip file(String fileName,String text,String dateLabel)/*-{
+	return this.file(fileName,text,{date : new $wnd.Date(dateLabel)});
+	}-*/;
+	
+	public final  JSZip file(String fileName,String text,long datetime){
+		String dateLabel=dateTimeFormat.format(new Date(datetime));
+		return file(fileName,text,dateLabel);
+	}
 	
 	/**
 	 * designed for canvas-url
