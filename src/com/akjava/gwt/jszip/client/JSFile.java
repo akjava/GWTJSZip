@@ -1,5 +1,6 @@
 package com.akjava.gwt.jszip.client;
 
+import com.akjava.gwt.html5.client.file.Uint8Array;
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class JSFile extends JavaScriptObject{
@@ -24,7 +25,7 @@ public class JSFile extends JavaScriptObject{
 	public final native JavaScriptObject asArrayBuffer()/*-{
 	return this.asArrayBuffer();
 	}-*/;
-	public final native JavaScriptObject asUint8Array()/*-{
+	public final native Uint8Array asUint8Array()/*-{
 	return this.asUint8Array();
 	}-*/;
 	public final native JavaScriptObject asNodeBuffer()/*-{

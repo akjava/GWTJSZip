@@ -1,13 +1,13 @@
 package com.akjava.gwt.samplejszip.client;
 
-import java.io.UnsupportedEncodingException;
-
 import com.akjava.gwt.html5.client.download.HTML5Download;
 import com.akjava.gwt.html5.client.file.Blob;
 import com.akjava.gwt.html5.client.file.File;
 import com.akjava.gwt.html5.client.file.FileHandler;
 import com.akjava.gwt.html5.client.file.FileReader;
+import com.akjava.gwt.html5.client.file.FileUploadForm;
 import com.akjava.gwt.html5.client.file.FileUtils;
+import com.akjava.gwt.html5.client.file.FileUtils.DataURLListener;
 import com.akjava.gwt.html5.client.file.Uint8Array;
 import com.akjava.gwt.html5.client.file.webkit.DirectoryCallback;
 import com.akjava.gwt.html5.client.file.webkit.FileEntry;
@@ -15,13 +15,13 @@ import com.akjava.gwt.html5.client.file.webkit.FilePathCallback;
 import com.akjava.gwt.html5.client.file.webkit.Item;
 import com.akjava.gwt.jszip.client.JSFile;
 import com.akjava.gwt.jszip.client.JSZip;
+import com.akjava.gwt.lib.client.Base64Utils;
 import com.akjava.gwt.lib.client.CanvasUtils;
 import com.akjava.gwt.lib.client.LogUtils;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DragEnterEvent;
@@ -30,9 +30,12 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
 
 public class SampleJSZip implements EntryPoint {
 
@@ -150,6 +153,76 @@ public class SampleJSZip implements EntryPoint {
 			}
 		});
 		
+		final JSZip loadZip=JSZip.loadFile("test.zip");
+		root.add(new Label("load"));
+		/*
+		try {
+			RequestBuilder builder=new RequestBuilder(RequestBuilder.GET,"voa_wordindex.zip");
+			builder.setHeader("content-type", "text/plain; charset=x-user-defined");
+			builder.sendRequest(null, new RequestCallback() {
+				
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+					loadZip.load(response.getText());
+					LogUtils.log(loadZip);
+				}
+				
+				@Override
+				public void onError(Request request, Throwable exception) {
+					LogUtils.log(exception.getMessage());
+				}
+			});
+		} catch (RequestException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		
+		
+		JsArrayString files=loadZip.getFiles();
+		for(int i=0;i<files.length();i++){
+		String fileName=files.get(i);
+		if(!fileName.endsWith("/")){
+			root.add(new Label(loadZip.getFile(fileName).getName()));
+		}
+		
+		}
+		
+		final VerticalPanel images=new VerticalPanel();
+		
+		FileUploadForm upload=FileUtils.createSingleFileUploadForm(new DataURLListener() {
+			@Override
+			public void uploaded(File file, String value) {
+				images.clear();
+				final FileReader reader=FileReader.createFileReader();
+				reader.setOnLoad(new FileHandler() {
+					
+					@Override
+					public void onLoad() {
+						Uint8Array uint=reader.getResultAsBuffer();
+						JSZip zip=JSZip.newJSZip(uint);
+						JsArrayString fileNames=zip.getFiles();
+						for(int i=0;i<fileNames.length();i++){
+							String fileName=fileNames.get(i);
+							LogUtils.log(fileName);
+							if(fileName.endsWith(".png")){
+								JSFile file=zip.getFile(fileName);
+								Uint8Array imageData=file.asUint8Array();
+								LogUtils.log("length:"+imageData.length());
+								
+								String url=Base64Utils.toDataUrl("image/png", imageData.toByteArray());
+								images.add(new Image(url));
+							}
+						}
+						
+					}
+				});
+				reader.readAsArrayBuffer(file);
+			}
+		}, true);
+		root.add(upload);
+		root.add(images);
+		
 		/*
 		 * i have no idea how to catch every async file-load finished.
 		 */
@@ -171,6 +244,7 @@ public class SampleJSZip implements EntryPoint {
 		root.add(downloadLinks);
 		
 	}
+
 
 	public void readFile(final JSZip zip,final File file,final String path){
 		final FileReader reader = FileReader.createFileReader();

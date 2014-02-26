@@ -3,23 +3,48 @@ package com.akjava.gwt.jszip.client;
 import java.util.Date;
 
 import com.akjava.gwt.html5.client.file.Blob;
+import com.akjava.gwt.html5.client.file.Uint8Array;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class JSZip extends JavaScriptObject{
 protected JSZip(){}
 	private static final DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MMMM dd, yyyy HH:mm:ss");
 	public static native final boolean exists()/*-{
-	return $wnd.JSZip;
+		if($wnd.JSZip){
+			return true;
+		}else{
+			return false;
+		}
+	
 	}-*/;
 
 	public final static native JSZip newJSZip()/*-{
 	return new $wnd.JSZip();
 	}-*/;
 	
+	public final static native JSZip newJSZip(Uint8Array array)/*-{
+	return new $wnd.JSZip(array);
+	}-*/;
 	
 	public final native JSFile getFile(String fileName)/*-{
 	return this.file(fileName);
+	}-*/;
+	
+	public final native JavaScriptObject files()/*-{
+	
+
+	return this.files;
+	}-*/;
+	
+	public final native JsArrayString getFiles()/*-{
+	var ret=[];
+			for(var value in this.files){
+			ret.push(value);
+		}
+		
+	return ret;
 	}-*/;
 	
 	/**
@@ -32,6 +57,8 @@ protected JSZip(){}
 	public final native JSZip file(String fileName,String text)/*-{
 	return this.file(fileName,text);
 	}-*/;
+	
+	
 	
 	public final native JSZip file(String fileName,String text,String dateLabel)/*-{
 	return this.file(fileName,text,{date : new $wnd.Date(dateLabel)});
@@ -78,6 +105,10 @@ protected JSZip(){}
 	return this.folder(folderName);
 	}-*/;
 	
+	public final native JSZip load(String xhrText)/*-{
+	return this.load(xhrText);
+	}-*/;
+	
 	public final native JSZip remove(String name)/*-{
 	return this.remove(name);
 	}-*/;
@@ -107,4 +138,25 @@ protected JSZip(){}
 	}	
 	return this.generate(parameter);
 	}-*/;
+	
+	//path must be from module
+	public static final JSZip loadFile(String url){
+		JSZip zip=JSZip.newJSZip();
+		if(!url.startsWith("/")){
+			url="../"+url;//relative from module
+		}
+		return zip.load(getBinaryResource(url));
+	}
+	
+	//from http://stackoverflow.com/questions/6023915/gwt-http-response-gettext-as-binary
+	private static native String getBinaryResource(String url) /*-{
+    // ...implemented with JavaScript                 
+    var req = new XMLHttpRequest();
+    req.open("GET", url, false);  // The last parameter determines whether the request is asynchronous -> this case is sync.
+    req.overrideMimeType('text/plain; charset=x-user-defined');
+    req.send(null);
+    if (req.status == 200) {                    
+        return req.responseText;
+    } else return null
+}-*/;
 }
