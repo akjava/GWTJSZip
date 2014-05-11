@@ -28,7 +28,7 @@
     	        </javac>
     	<copydir dest="tmp" src="src"></copydir>
     	
-    	<jar destfile="built/akjava_jszip.jar" basedir="tmp"/>
+    	<jar destfile="built/akjava_gwtjszip.jar" basedir="tmp"/>
     	<delete dir="tmp"></delete>
     </target>
 
