@@ -6,6 +6,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class JSFile extends JavaScriptObject{
 	protected JSFile(){}
 	
+	public final native boolean isDir()/*-{
+	return this.dir;
+	}-*/;
+	
 	public final native String getName()/*-{
 	return this.name;
 	}-*/;

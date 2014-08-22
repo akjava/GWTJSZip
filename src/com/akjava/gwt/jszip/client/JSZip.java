@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.akjava.gwt.html5.client.file.Blob;
 import com.akjava.gwt.html5.client.file.Uint8Array;
+import com.akjava.gwt.lib.client.Base64Utils;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -101,6 +102,10 @@ protected JSZip(){}
 	return this.file(fileName,data,option);
 	}-*/;
 	
+	public final native JSZip file(String fileName,Uint8Array data,JSFileOptions option)/*-{
+	return this.file(fileName,data,option);
+	}-*/;
+	
 	public final native JSZip folder(String folderName)/*-{
 	return this.folder(folderName);
 	}-*/;
@@ -108,6 +113,16 @@ protected JSZip(){}
 	public final native JSZip load(String xhrText)/*-{
 	return this.load(xhrText);
 	}-*/;
+	
+	public final native JSZip load(Uint8Array array)/*-{
+	return this.load(array);
+	}-*/;
+	
+	public final native JSZip load(String text,JSFileOptions option)/*-{
+	return this.load(text,option);
+	}-*/;
+	
+	
 	
 	public final native JSZip remove(String name)/*-{
 	return this.remove(name);
@@ -146,6 +161,19 @@ protected JSZip(){}
 			url="../"+url;//relative from module
 		}
 		return zip.load(getBinaryResource(url));
+	}
+	
+	public static final JSZip loadBase64(String base64){
+		//TODO Base64Utils.cutHeader(text) in here
+		JSZip zip=JSZip.newJSZip();
+		zip.load(base64,JSFileOptions.newJSFileOptions().base64(true));
+		return zip;
+	}
+
+	public static final JSZip loadFromArray(Uint8Array array){
+		JSZip zip=JSZip.newJSZip();
+		zip.load(array);
+		return zip;
 	}
 	
 	//from http://stackoverflow.com/questions/6023915/gwt-http-response-gettext-as-binary
