@@ -1,13 +1,15 @@
 package com.akjava.gwt.jszip.client;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Date;
 
 import com.akjava.gwt.html5.client.file.Blob;
 import com.akjava.gwt.html5.client.file.Uint8Array;
-import com.akjava.gwt.lib.client.Base64Utils;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.typedarrays.shared.ArrayBuffer;
 
 public class JSZip extends JavaScriptObject{
 protected JSZip(){}
@@ -156,6 +158,7 @@ protected JSZip(){}
 	
 	//path must be from module
 	public static final JSZip loadFile(String url){
+		checkState(JSZip.exists(),"you need load jszip.js on html");
 		JSZip zip=JSZip.newJSZip();
 		if(!url.startsWith("/")){
 			url="../"+url;//relative from module
@@ -164,6 +167,7 @@ protected JSZip(){}
 	}
 	
 	public static final JSZip loadBase64(String base64){
+		checkState(JSZip.exists(),"you need load jszip.js on html");
 		//TODO Base64Utils.cutHeader(text) in here
 		JSZip zip=JSZip.newJSZip();
 		zip.load(base64,JSFileOptions.newJSFileOptions().base64(true));
@@ -171,10 +175,20 @@ protected JSZip(){}
 	}
 
 	public static final JSZip loadFromArray(Uint8Array array){
+		checkState(JSZip.exists(),"you need load jszip.js on html");
 		JSZip zip=JSZip.newJSZip();
 		zip.load(array);
 		return zip;
 	}
+	
+	public static final JSZip loadFromArrayBuffer(ArrayBuffer buffer){
+		checkState(JSZip.exists(),"you need load jszip.js on html");
+		JSZip zip=JSZip.newJSZip();
+		zip.load(Uint8Array.createUint8(buffer));
+		return zip;
+	}
+	
+	
 	
 	//from http://stackoverflow.com/questions/6023915/gwt-http-response-gettext-as-binary
 	private static native String getBinaryResource(String url) /*-{
