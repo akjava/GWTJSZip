@@ -3,10 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/GWTLib2011"/>
 	<classpathentry kind="lib" path="/GWTLib2011/lib/guava-gwt.jar"/>
 	<classpathentry kind="lib" path="/GWTLib2011/lib/guava-sources.jar"/>
 	<classpathentry kind="lib" path="/GWTLib2011/lib/guava.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/html5gwt"/>
+	<classpathentry kind="lib" path="lib/akjavalibgwt-dep_150706.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
