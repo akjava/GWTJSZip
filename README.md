@@ -26,6 +26,6 @@ support load
 only ascii-file name work fine on Windows default zip-extractor,so use 7Zip to unzip
 
 ##History
-150706.jar - build with GWT2.6.1 & Guava 1.8
+150706.jar - build with GWT2.6.1 & Guava 1.8 & JSZip2.5
 
-140511.jar - build with GWT2.5.1 & Guava 1.6 based
+140511.jar - build with GWT2.5.1 & Guava 1.6 & JSZip2.4
