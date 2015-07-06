@@ -8,7 +8,7 @@ public class JSFileOptions extends JavaScriptObject{
 	public final static native JSFileOptions newJSFileOptions()/*-{
 	return {};
 	}-*/;
-	
+
 	public final native JSFileOptions base64(boolean base64)/*-{
 	this.base64=base64;
 	return this;
@@ -19,7 +19,7 @@ public class JSFileOptions extends JavaScriptObject{
 	return this;
 	}-*/;
 	
-	//TODO support Date
+
 	public final native JSFileOptions date(JavaScriptObject date)/*-{
 	this.date=date;
 	return this;
@@ -34,17 +34,29 @@ public class JSFileOptions extends JavaScriptObject{
 	return this;
 	}-*/;
 	
-	 
+	/**
+	 * @deprecated on jszip2.4
+	 */ 
 	public final native boolean getBase64()/*-{
 	return this.base64;
 	}-*/;
-	 
+	/**
+	 * @deprecated on jszip2.4
+	 */
 	public final native boolean getBinary()/*-{
 	return this.binary;
 	}-*/;
+	
+	/**
+	 * @deprecated on jszip2.4
+	 */
+	
 	public final native boolean getDir()/*-{
 	return this.dir;
 	}-*/;
+	/**
+	 * @deprecated on jszip2.4
+	 */
 	public final native JavaScriptObject getDate()/*-{
 	return this.date;
 	}-*/;

@@ -14,6 +14,10 @@ public class JSFile extends JavaScriptObject{
 	return this.name;
 	}-*/;
 	
+	/**
+	 * after 2.5 date,dir,base64,binary is deprecated.date & dir access directly
+	 * @return
+	 */
 	public final native JSFileOptions getOptions()/*-{
 	return this.options;
 	}-*/;
@@ -34,5 +38,11 @@ public class JSFile extends JavaScriptObject{
 	}-*/;
 	public final native JavaScriptObject asNodeBuffer()/*-{
 	return this.asNodeBuffer();
+	}-*/;
+	
+
+
+	public final native JavaScriptObject getDate()/*-{
+	return this.date;
 	}-*/;
 }

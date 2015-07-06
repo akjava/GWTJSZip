@@ -56,7 +56,8 @@ public class SampleJSZip implements EntryPoint {
 		
 		LogUtils.log(file.getName());
 		LogUtils.log(file.asText());
-		LogUtils.log(file.getOptions().getDate());
+		LogUtils.log(file.getDate());
+		LogUtils.log(file.isDir());
 		
 		
 		JSZip dir=zip.folder("images");
@@ -154,7 +155,7 @@ public class SampleJSZip implements EntryPoint {
 		});
 		
 		final JSZip loadZip=JSZip.loadFile("test.zip");
-		root.add(new Label("load"));
+		root.add(new Label("[load test.zip file-list]"));
 		/*
 		try {
 			RequestBuilder builder=new RequestBuilder(RequestBuilder.GET,"voa_wordindex.zip");
@@ -220,6 +221,9 @@ public class SampleJSZip implements EntryPoint {
 				reader.readAsArrayBuffer(file);
 			}
 		}, true);
+		upload.setAccept(FileUploadForm.ACCEPT_ZIP);
+		
+		root.add(new Label("[choose zip and show file names on log]"));
 		root.add(upload);
 		root.add(images);
 		
