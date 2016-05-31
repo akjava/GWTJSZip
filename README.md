@@ -1,5 +1,7 @@
 #GWTJSZip
 
+merged to https://github.com/akjava/akjava_gwtlib
+
 this is jszip wrapper for GWT
 http://stuk.github.io/jszip/
 
