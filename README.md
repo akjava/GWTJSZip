@@ -31,3 +31,18 @@ only ascii-file name work fine on Windows default zip-extractor,so use 7Zip to u
 150706.jar - build with GWT2.6.1 & Guava 1.8 & JSZip2.5
 
 140511.jar - build with GWT2.5.1 & Guava 1.6 & JSZip2.4
+
+###WARNING
+Only Work contained JSZip,not work with newer JSZip3.x
+
+####for GWT2.8
+Old Guava not work with newer GWT
+remove guava dependency to work with GWT2.8.
+
+change Blob to Object in JsZip.java
+
+public final native Blob generateBlob(String compression)/*-{
+
+remove these line in GWTJSZip.gwt.xml
+
+<inherits name="com.akjava.gwt.html5.Html5widget" />
